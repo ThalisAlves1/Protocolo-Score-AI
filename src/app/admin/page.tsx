@@ -15,8 +15,7 @@ export default async function AdminPage() {
             Acesse para cadastrar casos clínicos, revisar gabaritos e preparar testes para os alunos.
           </p>
           <div className="alert">
-            <strong>Primeiro acesso:</strong> use a senha configurada no arquivo <code>.env</code> em <code>ADMIN_PASSWORD</code>.
-            Se não configurar, a senha padrão de desenvolvimento é <code>admin123</code>.
+            
           </div>
         </div>
         <AdminLoginForm />
