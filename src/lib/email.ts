@@ -118,10 +118,12 @@ export async function sendFeedbackEmail(payload: FeedbackEmailPayload): Promise<
   const replyTo = process.env.FEEDBACK_EMAIL_REPLY_TO?.trim();
 
   if (!payload.to?.trim()) {
+    console.log("[EMAIL] Aluno não informou e-mail");
     return { sent: false, skipped: true, reason: "Aluno não informou e-mail." };
   }
 
   if (!apiKey || !from) {
+    console.log("[EMAIL] RESEND_API_KEY ou FEEDBACK_EMAIL_FROM não configurado");
     return { sent: false, skipped: true, reason: "RESEND_API_KEY ou FEEDBACK_EMAIL_FROM não configurado." };
   }
 
@@ -129,6 +131,9 @@ export async function sendFeedbackEmail(payload: FeedbackEmailPayload): Promise<
   const html = buildFeedbackEmailHtml(payload);
   const text = buildFeedbackEmailText(payload);
 
+  console.log(`[EMAIL] Enviando para: ${payload.to}`);
+  console.log(`[EMAIL] De: ${from}`);
+  
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -149,8 +154,10 @@ export async function sendFeedbackEmail(payload: FeedbackEmailPayload): Promise<
 
   if (!response.ok) {
     const message = data?.message || data?.error?.message || `Erro HTTP ${response.status}`;
+    console.error(`[EMAIL] Erro ao enviar: ${message}`, data);
     return { sent: false, skipped: false, reason: message };
   }
 
+  console.log(`[EMAIL] Enviado com sucesso: ${data?.id}`);
   return { sent: true, provider: "resend", id: data?.id };
 }

@@ -12,10 +12,10 @@ const exampleCase = {
     "Frequência respiratória": "28 irpm",
     "SpO2": "90%",
     "Oxigênio suplementar": "Sim",
-    "PA sistólica": "92 mmHg",
     "Frequência cardíaca": "118 bpm",
+    "PA sistólica": "92 mmHg",
     "Temperatura": "38,5 ºC",
-    "Consciência": "Confuso"
+    "Nível de consciência": "Confuso"
   },
   answerKey: {
     items: [

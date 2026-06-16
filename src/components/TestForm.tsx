@@ -8,7 +8,7 @@ export function TestForm({ clinicalCase }: { clinicalCase: CaseForUi }) {
   const router = useRouter();
   const [studentName, setStudentName] = useState("");
   const [studentEmail, setStudentEmail] = useState("");
-  const [protocol, setProtocol] = useState<Protocol>(clinicalCase.protocol);
+  const [protocol, setProtocol] = useState<Protocol | "">();
   const [itemScores, setItemScores] = useState<Record<string, number>>({});
   const [totalScore, setTotalScore] = useState<number>(0);
   const [riskLevel, setRiskLevel] = useState("");
@@ -26,8 +26,14 @@ export function TestForm({ clinicalCase }: { clinicalCase: CaseForUi }) {
     setError("");
     setSubmitting(true);
 
+    if (!protocol) {
+      setError("Por favor, selecione um protocolo.");
+      setSubmitting(false);
+      return;
+    }
+
     const answer: StudentAnswer = {
-      protocol,
+      protocol: protocol as Protocol,
       itemScores,
       totalScore: Number(totalScore),
       riskLevel,
@@ -74,7 +80,8 @@ export function TestForm({ clinicalCase }: { clinicalCase: CaseForUi }) {
 
         <div className="field">
           <label>Protocolo usado</label>
-          <select value={protocol} onChange={(e) => setProtocol(e.target.value as Protocol)}>
+          <select value={protocol ?? ""} onChange={(e) => setProtocol(e.target.value as Protocol)}>
+            <option value="">-- Selecione o protocolo --</option>
             <option value="NEWS2">NEWS2</option>
             <option value="MEOWS">MEOWS</option>
             <option value="PEWS">PEWS/PEOWS</option>
@@ -92,10 +99,9 @@ export function TestForm({ clinicalCase }: { clinicalCase: CaseForUi }) {
                   <small style={{ color: "var(--muted)" }}>{item.explanation || "Item do protocolo."}</small>
                 </div>
                 <input
-                  type="number"
                   value={itemScores[item.key] ?? ""}
-                  onChange={(e) => setItemScores((prev) => ({ ...prev, [item.key]: Number(e.target.value) }))}
-                  placeholder="0"
+                  onChange={(e) => setItemScores((prev) => ({ ...prev, [item.key]: Number(e.target.value) || 0 }))}
+                  placeholder="Ex.: 3"
                 />
               </div>
             ))}
@@ -106,7 +112,7 @@ export function TestForm({ clinicalCase }: { clinicalCase: CaseForUi }) {
 
         <div className="field">
           <label>Pontuação total informada pelo aluno</label>
-          <input type="number" value={totalScore} onChange={(e) => setTotalScore(Number(e.target.value))} />
+          <input value={totalScore === 0 ? "" : totalScore} onChange={(e) => setTotalScore(Number(e.target.value) || 0)} placeholder="Ex.: 17" />
         </div>
 
         <div className="field">
