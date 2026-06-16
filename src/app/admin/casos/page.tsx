@@ -30,24 +30,7 @@ export default async function AdminCasesPage() {
       </section>
 
       <div className="hero-grid" style={{ alignItems: "start" }}>
-        <AdminCaseForm />
-        <div className="card">
-          <h2>Últimos casos</h2>
-          <table className="table">
-            <thead>
-              <tr><th>Título</th><th>Protocolo</th><th>Nível</th></tr>
-            </thead>
-            <tbody>
-              {cases.map((clinicalCase) => (
-                <tr key={clinicalCase.id}>
-                  <td>{clinicalCase.title}</td>
-                  <td>{clinicalCase.protocol}</td>
-                  <td>{clinicalCase.difficulty}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminCaseForm cases={cases} />
       </div>
     </main>
   );
