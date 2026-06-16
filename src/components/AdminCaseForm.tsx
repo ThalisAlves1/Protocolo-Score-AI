@@ -65,8 +65,8 @@ function buildAnswerKeyPayload(items: AnswerKeyRow[]) {
 
 export function AdminCaseForm({ cases }: AdminCaseFormProps) {
   const [title, setTitle] = useState(exampleCase.title);
-  const [protocol, setProtocol] = useState<CaseForUi["protocol"]>(exampleCase.protocol);
-  const [difficulty, setDifficulty] = useState<CaseForUi["difficulty"]>(exampleCase.difficulty);
+  const [protocol, setProtocol] = useState<CaseForUi["protocol"]>(exampleCase.protocol as CaseForUi["protocol"]);
+  const [difficulty, setDifficulty] = useState<CaseForUi["difficulty"]>(exampleCase.difficulty as CaseForUi["difficulty"]);
   const [stem, setStem] = useState(exampleCase.stem);
   const [vitalSigns, setVitalSigns] = useState<VitalSignRow[]>(buildVitalSignRows(exampleCase.vitalSigns));
   const [answerItems, setAnswerItems] = useState<AnswerKeyRow[]>(
@@ -87,8 +87,8 @@ export function AdminCaseForm({ cases }: AdminCaseFormProps) {
 
   function resetFromExample() {
     setTitle(exampleCase.title);
-    setProtocol(exampleCase.protocol);
-    setDifficulty(exampleCase.difficulty);
+    setProtocol(exampleCase.protocol as CaseForUi["protocol"]);
+    setDifficulty(exampleCase.difficulty as CaseForUi["difficulty"]);
     setStem(exampleCase.stem);
     setVitalSigns(buildVitalSignRows(exampleCase.vitalSigns));
     setAnswerItems(

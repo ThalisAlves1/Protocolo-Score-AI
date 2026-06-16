@@ -26,7 +26,9 @@ const updateCaseSchema = z.object({
   active: z.boolean().optional()
 });
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
   if (!isAdminRequest(request)) {
     return Response.json({ ok: false, message: "Acesso admin necessário." }, { status: 401 });
   }
@@ -55,7 +57,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   const { data, error } = await supabaseAdmin
     .from("clinical_cases")
     .update(updateData)
-    .eq("id", params.id)
+    .eq("id", id)
     .select("*")
     .single();
 
