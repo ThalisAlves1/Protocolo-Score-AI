@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { AdminNav } from "@/components/AdminNav";
 import { AdminCaseForm } from "@/components/AdminCaseForm";
 import { AdminLogoutButton } from "@/components/AdminLogoutButton";
 import { mapClinicalCase, type ClinicalCaseRow } from "@/lib/db";
@@ -19,19 +20,21 @@ export default async function AdminCasesPage() {
   const cases = (data as ClinicalCaseRow[]).map(mapClinicalCase);
 
   return (
-    <main className="container" style={{ padding: "34px 0 60px" }}>
-      <section className="admin-title-row">
-        <div>
-          <div className="kicker">Administração</div>
-          <h1>Cadastrar e revisar casos clínicos</h1>
-          <p>Use esta área para transformar seus casos prontos em gabaritos estruturados para correção automática.</p>
-        </div>
-        <AdminLogoutButton />
-      </section>
+    <>
+      <AdminNav currentPage="casos" />
+      <main className="container" style={{ padding: "34px 0 60px" }}>
+        <section className="admin-title-row">
+          <div>
+            <div className="kicker">Administração</div>
+            <h1>Cadastrar e revisar casos clínicos</h1>
+            <p>Use esta área para transformar seus casos prontos em gabaritos estruturados para correção automática.</p>
+          </div>
+        </section>
 
-      <div className="hero-grid" style={{ alignItems: "start" }}>
-        <AdminCaseForm cases={cases} />
-      </div>
-    </main>
+        <div className="hero-grid" style={{ alignItems: "start" }}>
+          <AdminCaseForm cases={cases} />
+        </div>
+      </main>
+    </>
   );
 }
