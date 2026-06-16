@@ -6,6 +6,8 @@ import { mapClinicalCase, type ClinicalCaseRow } from "@/lib/db";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { isAdminSession } from "@/lib/adminAuth";
 
+export const revalidate = 0;
+
 export default async function AdminCasesPage() {
   if (!(await isAdminSession())) redirect("/admin");
 

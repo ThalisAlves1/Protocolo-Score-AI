@@ -2,6 +2,8 @@ import { CaseCard } from "@/components/CaseCard";
 import { mapClinicalCase, type ClinicalCaseRow } from "@/lib/db";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
+export const revalidate = 0;
+
 export default async function CasesPage() {
   const { data, error } = await supabaseAdmin
     .from("clinical_cases")

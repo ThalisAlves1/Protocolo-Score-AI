@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
+export const revalidate = 0;
+
 export default async function HomePage() {
   const [{ count: totalCases }, { count: totalAttempts }] = await Promise.all([
     supabaseAdmin.from("clinical_cases").select("id", { count: "exact", head: true }).eq("active", true),

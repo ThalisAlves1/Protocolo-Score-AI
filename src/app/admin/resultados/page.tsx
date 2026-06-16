@@ -5,6 +5,8 @@ import { mapAttempt, type AttemptRow } from "@/lib/db";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { isAdminSession } from "@/lib/adminAuth";
 
+export const revalidate = 0;
+
 export default async function AdminResultsPage() {
   if (!(await isAdminSession())) redirect("/admin");
 
