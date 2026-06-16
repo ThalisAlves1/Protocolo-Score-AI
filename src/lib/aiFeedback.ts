@@ -3,7 +3,7 @@ import type { AnswerKey, GradingResult, StudentAnswer } from "./types";
 function fallbackFeedback(grading: GradingResult, answerKey: AnswerKey) {
   const mainErrors = grading.errors.length
     ? grading.errors.map((error) => `- ${error}`).join("\n")
-    : "- Nenhum erro objetivo encontrado nos campos pontuados.";
+    : "- Nenhum erro objetivo encontrado.";
 
   return [
     `Resultado: ${grading.score}/${grading.maxScore} (${grading.percentage}%).`,
@@ -11,9 +11,13 @@ function fallbackFeedback(grading: GradingResult, answerKey: AnswerKey) {
     "Pontos que precisam de atenção:",
     mainErrors,
     "",
-    `Conduta esperada: ${answerKey.expectedConduct}`,
+    grading.strengths.length > 0 ? "Acertos:\n" + grading.strengths.map((s) => `- ${s}`).join("\n") : "",
     "",
-    `Comentário do gabarito: ${answerKey.explanation}`,
+    `Conduta esperada conforme o protocolo:`,
+    answerKey.expectedConduct,
+    "",
+    `Explicação clínica:`,
+    answerKey.explanation,
     "",
     "Este feedback é educacional e não substitui avaliação clínica real."
   ].join("\n");
@@ -55,10 +59,18 @@ export async function generateAiFeedback(params: {
   if (!apiKey) return fallbackFeedback(params.grading, params.answerKey);
 
   const system = `Você é um tutor de enfermagem e simulação clínica.
-Use apenas os dados enviados. Não recalcule pontuação por conta própria.
-A pontuação correta já foi calculada pelo sistema por gabarito.
+
+IMPORTANTE: Você NUNCA deve contar ou avaliar "Conduta proposta" e "Justificativa do raciocínio" como critérios de pontuação.
+Apenas corrija os itens OBJETIVOS:
+- Pontuação de cada parâmetro vital
+- Pontuação total
+- Classificação de risco
+- Protocolo identificado
+
 Gere feedback educacional, claro, respeitoso e prático.
-Inclua: acertos, erros, por que os erros importam, conduta esperada e o que revisar.
+Inclua: acertos, erros, por que os erros importam, conduta esperada conforme protocolo e conceitos a revisar.
+
+Não recalcule a pontuação. A nota já foi calculada pelo sistema.
 Não dê diagnóstico definitivo. Não diga que substitui avaliação profissional.
 Responda em português do Brasil.`;
 

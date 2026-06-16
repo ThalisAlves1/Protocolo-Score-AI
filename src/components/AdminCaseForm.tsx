@@ -212,6 +212,31 @@ export function AdminCaseForm({ cases }: AdminCaseFormProps) {
     setAnswerItems((current) => current.filter((_, idx) => idx !== index));
   }
 
+  async function deleteCase(caseId: string, caseTitle: string) {
+    if (!confirm(`Tem certeza que deseja deletar o caso "${caseTitle}"? Esta ação não pode ser desfeita.`)) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/admin/cases/${caseId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" }
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Erro ao deletar caso.");
+
+      setStatus(`Caso "${caseTitle}" deletado com sucesso.`);
+      // Recarrega a página para atualizar a lista de casos
+      setTimeout(() => window.location.reload(), 1500);
+    } catch (err) {
+      setStatus(err instanceof Error ? err.message : "Erro ao deletar caso.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="card">
       <h2>{editingId ? "Editar caso" : "Cadastrar caso"}</h2>
@@ -352,9 +377,18 @@ export function AdminCaseForm({ cases }: AdminCaseFormProps) {
                 <td>{clinicalCase.title}</td>
                 <td>{clinicalCase.protocol}</td>
                 <td>{clinicalCase.difficulty}</td>
-                <td>
-                  <button className="btn btn-secondary" type="button" onClick={() => editCase(clinicalCase)}>
+                <td style={{ display: "flex", gap: 8 }}>
+                  <button className="btn btn-secondary" type="button" onClick={() => editCase(clinicalCase)} style={{ fontSize: 12 }}>
                     Editar
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    type="button"
+                    onClick={() => deleteCase(clinicalCase.id, clinicalCase.title)}
+                    disabled={loading}
+                    style={{ fontSize: 12, background: "#fee2e2", color: "#991b1b" }}
+                  >
+                    Deletar
                   </button>
                 </td>
               </tr>
