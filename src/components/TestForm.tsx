@@ -99,8 +99,9 @@ export function TestForm({ clinicalCase }: { clinicalCase: CaseForUi }) {
                   <small style={{ color: "var(--muted)" }}>{item.explanation || "Item do protocolo."}</small>
                 </div>
                 <input
+                  type="number"
                   value={itemScores[item.key] ?? ""}
-                  onChange={(e) => setItemScores((prev) => ({ ...prev, [item.key]: Number(e.target.value) || 0 }))}
+                  onChange={(e) => setItemScores((prev) => ({ ...prev, [item.key]: e.target.value === "" ? 0 : Number(e.target.value) }))}
                   placeholder="Ex.: 3"
                 />
               </div>
@@ -112,7 +113,12 @@ export function TestForm({ clinicalCase }: { clinicalCase: CaseForUi }) {
 
         <div className="field">
           <label>Pontuação total informada pelo aluno</label>
-          <input value={totalScore === 0 ? "" : totalScore} onChange={(e) => setTotalScore(Number(e.target.value) || 0)} placeholder="Ex.: 17" />
+          <input 
+            type="number"
+            value={totalScore === 0 ? "" : totalScore} 
+            onChange={(e) => setTotalScore(e.target.value === "" ? 0 : Number(e.target.value))} 
+            placeholder="Ex.: 17" 
+          />
         </div>
 
         <div className="field">

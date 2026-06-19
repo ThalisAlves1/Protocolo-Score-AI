@@ -8,6 +8,38 @@ function normalizeText(value: string | undefined | null) {
     .toLowerCase();
 }
 
+function compareRiskLevel(studentAnswer: string, correctAnswer: string): boolean {
+  const normalize = (text: string) => normalizeText(text);
+  
+  // Se forem exatamente iguais após normalização
+  if (normalize(studentAnswer) === normalize(correctAnswer)) {
+    return true;
+  }
+  
+  // Extrai palavras-chave de risco (alto, baixo, medio, crítico, etc)
+  const riskKeywords = ["alto", "baixo", "medio", "critico", "moderado", "grave", "leve"];
+  const severityKeywords = ["risco", "perigo"];
+  
+  const getKeywords = (text: string): Set<string> => {
+    const words = normalize(text).split(/\s+/);
+    return new Set(words.filter(w => 
+      riskKeywords.some(k => w.includes(k)) || 
+      severityKeywords.some(k => w.includes(k))
+    ));
+  };
+  
+  const studentKeywords = getKeywords(studentAnswer);
+  const correctKeywords = getKeywords(correctAnswer);
+  
+  // Se contém as mesmas palavras-chave relevantes, considera correto
+  if (studentKeywords.size > 0 && 
+      Array.from(studentKeywords).every(kw => Array.from(correctKeywords).some(ck => ck.includes(kw) || kw.includes(ck)))) {
+    return true;
+  }
+  
+  return false;
+}
+
 export function gradeAttempt(answerKey: AnswerKey, answer: StudentAnswer, expectedProtocol?: string): GradingResult {
   const items = answerKey.items.map((item) => {
     const rawStudentScore = answer.itemScores?.[item.key];
@@ -24,7 +56,7 @@ export function gradeAttempt(answerKey: AnswerKey, answer: StudentAnswer, expect
 
   const protocolCorrect = expectedProtocol ? normalizeText(answer.protocol) === normalizeText(expectedProtocol) : true;
   const totalCorrect = Number(answer.totalScore) === Number(answerKey.totalScore);
-  const riskCorrect = normalizeText(answer.riskLevel) === normalizeText(answerKey.riskLevel);
+  const riskCorrect = compareRiskLevel(answer.riskLevel, answerKey.riskLevel);
 
   const errors: string[] = [];
   const strengths: string[] = [];
@@ -40,8 +72,11 @@ export function gradeAttempt(answerKey: AnswerKey, answer: StudentAnswer, expect
   if (totalCorrect) strengths.push("Calculou corretamente a pontuação total.");
   else errors.push(`Pontuação total: aluno marcou ${answer.totalScore}, correto era ${answerKey.totalScore}.`);
 
-  if (riskCorrect) strengths.push("Classificou corretamente o nível de risco.");
-  else errors.push(`Classificação de risco: aluno respondeu "${answer.riskLevel}", correto era "${answerKey.riskLevel}".`);
+  if (riskCorrect) {
+    strengths.push(`Classificação de risco: corretamente identificado como "${answerKey.riskLevel}".`);
+  } else {
+    errors.push(`Classificação de risco: aluno respondeu "${answer.riskLevel}", correto era "${answerKey.riskLevel}".`);
+  }
 
   if (protocolCorrect) strengths.push("Identificou corretamente o protocolo do caso.");
   else errors.push(`Protocolo: aluno respondeu "${answer.protocol}", correto era "${expectedProtocol}".`);

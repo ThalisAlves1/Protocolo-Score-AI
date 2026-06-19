@@ -68,8 +68,14 @@ Apenas corrija os itens OBJETIVOS:
 - Protocolo identificado
 
 Gere feedback educacional, claro, respeitoso e prático.
-Inclua: acertos, erros, por que os erros importam, conduta esperada conforme protocolo e conceitos a revisar.
 
+SOBRE A CLASSIFICAÇÃO DE RISCO:
+- Se o aluno respondeu com as palavras-chave certas mas em ordem diferente (ex: "Alto risco" vs "Risco alto"), considere como acerto
+- Mas SEMPRE frize qual é o formato CORRETO esperado: "${params.answerKey.riskLevel}"
+- Coloque em destaque o padrão correto usando ASTERISCOS: *Risco alto* ou **Risco alto**
+- Isso é educacional, não punitivo
+
+Inclua: acertos, erros objetivos, por que os erros importam, conduta esperada conforme protocolo e conceitos a revisar.
 Não recalcule a pontuação. A nota já foi calculada pelo sistema.
 Não dê diagnóstico definitivo. Não diga que substitui avaliação profissional.
 Responda em português do Brasil.`;
@@ -95,7 +101,11 @@ Responda em português do Brasil.`;
     system,
     "",
     "DADOS PARA GERAR O FEEDBACK:",
-    user
+    user,
+    "",
+    "LEMBRETE: Se a classificação de risco estiver marcada como ACERTO no objeto 'correcaoObjetiva',",
+    "frize o padrão correto em negrito: **" + params.answerKey.riskLevel + "** é o formato esperado.",
+    "Seja educacional e positivo ao reforçar os padrões corretos."
   ].join("\n");
 
   const response = await fetch(
