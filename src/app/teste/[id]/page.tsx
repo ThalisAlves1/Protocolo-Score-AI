@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { TestForm } from "@/components/TestForm";
+import { PrintCaseButton } from "@/components/PrintCaseButton";
 import { mapClinicalCase, type ClinicalCaseRow } from "@/lib/db";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
@@ -37,6 +38,7 @@ export default async function TestPage({ params }: { params: Promise<{ id: strin
               </div>
             ))}
           </div>
+          <PrintCaseButton clinicalCase={uiCase} />
         </section>
         <TestForm clinicalCase={uiCase} />
       </div>
